@@ -2,7 +2,7 @@ import {HomeIcon, File, UsersRound, UserRound, LogOut} from 'lucide-react'
 import Link from 'next/link';
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/components/ui/button';
 import { NavButton } from './NavButton';
 import { ModeToggle } from './ModeToggle';
 

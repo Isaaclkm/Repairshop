@@ -1,6 +1,6 @@
 import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 
 export default function LoginPage() {
     return(
