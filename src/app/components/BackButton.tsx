@@ -20,6 +20,6 @@ export function BackButton(
             className={className}
             onClick={() => router.back()}
             title={title}
-            >{title}</Button>
+        >{title}</Button>
     )
 }
