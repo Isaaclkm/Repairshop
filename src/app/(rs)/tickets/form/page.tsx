@@ -71,7 +71,7 @@ export default async function TicketFormPage({
             
             console.log('ticket', ticket)
             console.log('customer', customer)
-            return <TicketForm customer={customer}  ticket={ticket}/>
+            return <TicketForm customer={customer} ticket={ticket}/>
 
            }
     } catch (e) {

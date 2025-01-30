@@ -9,7 +9,7 @@ import { insertTicketSchema, selectTicketSchemaType, type insertTicketSchemaType
 import { selectCustomerSchemaType } from "@/zod-schemas/customer"
 
 type Props = {
-    customer: selectTicketSchemaType, 
+    customer: selectCustomerSchemaType, 
     ticket?: selectTicketSchemaType,
 }
 
