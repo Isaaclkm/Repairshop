@@ -10,15 +10,23 @@ import { selectCustomerSchemaType } from "@/zod-schemas/customer"
 import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { TextAreWithLabel } from "@/app/components/inputs/TextAreaWithLabel"
 import { CheckboxWithLabel } from "@/app/components/inputs/CheckBoxWithLabel"
+import { SelectWithLabel } from "@/app/components/inputs/SelectWithLabel"
 
 type Props = {
     customer: selectCustomerSchemaType, 
     ticket?: selectTicketSchemaType,
+    techs?: {
+        id: string, 
+        description: string,
+    }[],
+    isEditable?: boolean,
 }
 
 export default function TicketForm({
-    customer, ticket
+    customer, ticket, techs, isEditable = true
 }: Props) {
+    const isManager = Array.isArray(techs)
+
     const defaultValues: insertTicketSchemaType = {
         id: ticket?.id ?? "(New)",
         customerId: ticket?.customerId ?? customer.id, 
@@ -55,12 +63,23 @@ export default function TicketForm({
                             <InputWithLabel<insertTicketSchemaType>
                                fieldTitle="Title"
                                nameInSchema="title"
+                               disabled={!isEditable}
                             />
-                            <InputWithLabel<insertTicketSchemaType>
-                               fieldTitle="Tech"
-                               nameInSchema="tech"
-                               disabled={true}
-                            />
+
+                            {isManager ? (
+                                <SelectWithLabel<insertTicketSchemaType>
+                                    fieldTitle="Tech ID"
+                                    nameInSchema="tech"
+                                    data={[{id: 'new-ticket@example.com', description: 'new-ticket@example.com'}, ...techs]}
+                                    />
+                            ): (
+                                <InputWithLabel<insertTicketSchemaType>
+                                 fieldTitle="Tech"
+                                 nameInSchema="tech"
+                                 disabled={true}
+                              />
+                            )}
+                           
 
                             <CheckboxWithLabel<insertTicketSchemaType>
                                 fieldTitle="Completed"
