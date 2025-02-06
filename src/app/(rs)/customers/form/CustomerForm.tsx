@@ -15,6 +15,12 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 
 import { StatesArray } from "@/constants/StatesArray"
 
+import { useAction } from 'next-safe-action/hooks'
+import { saveCustomerAction } from "@/app/actions/saveCustomerAction" 
+import { useToast } from "@/hooks/use-toast"
+import { DisplayServerActionResponse } from "@/app/components/DisplayServerActionResponse"
+import { LoaderCircle } from 'lucide-react'
+
 type Props = {
     customer?: selectCustomerSchemaType, 
 }
@@ -22,8 +28,8 @@ type Props = {
 export default function CustomerForm({customer}: Props) {
     const { getPermission, isLoading } = useKindeBrowserClient()
     const isManager = !isLoading && getPermission('manager')?.isGranted
-    // const permObj = getPermissions()
-    // const isAuthorized = !isLoading && permObj.permissions.some(perm => perm == 'manager' || perm === 'admin')
+    const { toast } = useToast();
+
 
 
     const defaultValues: insertCustomerSchemaType = {
@@ -46,12 +52,36 @@ export default function CustomerForm({customer}: Props) {
         defaultValues,
     })
 
+    const { 
+        execute: executeSave,
+        result: saveResult,
+        isExecuting: isSaving,
+        reset: resetSaveAction,
+    } = useAction(saveCustomerAction, {
+        onSuccess({data}) {
+            toast({
+                variant: "default",
+                title: "Succes!",
+                description: data?.message
+            })
+        },
+        onError({error}){
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Save Failed"
+            })
+        }
+    })
+
     async function submitForm(data: insertCustomerSchemaType) {
-        console.log(data)
+       // console.log(data)
+        executeSave({...data, firstName: '', phone: ''})
     }
 
     return (
         <div className="flex flex-col gap-1 sm:px-8">
+            <DisplayServerActionResponse result={saveResult}/>
             <div>
 
                 <h2 className="text-2xl font-bold">
@@ -116,7 +146,7 @@ export default function CustomerForm({customer}: Props) {
                             className="h-40 "
                         />
 
-                        {isLoading ? <p>Loading...</p> : isManager ? (
+                        {isLoading ? <p>Loading...</p> : isManager && customer?.id ? (
                         <CheckboxWithLabel<insertCustomerSchemaType>
                             fieldTitle="Active"
                             nameInSchema="active"
@@ -130,15 +160,23 @@ export default function CustomerForm({customer}: Props) {
                                 className="w-3/4"
                                 variant="default"
                                 title="Save"
+                                disabled={isSaving}
                             >
-                                Save
+                                {isSaving ? (
+                                    <>
+                                    <LoaderCircle className="animate-spin"/>Saving
+                                    </>
+                                ): "Save"}
                             </Button>
 
                             <Button
                                 type="submit"
                                 variant="destructive"
                                 title="Reset"
-                                onClick={() => form.reset(defaultValues)}
+                                onClick={() => {
+                                    form.reset(defaultValues)
+                                    resetSaveAction()
+                                }}
                             >
                                 Reset
                             </Button>
@@ -146,11 +184,7 @@ export default function CustomerForm({customer}: Props) {
 
                         </div>              
                         
-
-
                     </div>
-
-
                 
                 </form>
             </Form>
